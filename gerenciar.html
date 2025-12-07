@@ -434,7 +434,8 @@
     }
 
     lista.innerHTML = convidados.map(convidado => {
-      const baseURL = window.location.origin + window.location.pathname.replace('gerenciador.html', 'convite.html');
+      // CORREÇÃO: Hardcoda o caminho para 'convite.html' para garantir que o link seja sempre correto
+      const baseURL = window.location.origin + '/convite.html';
       const linkPersonalizado = `${baseURL}?nome=${encodeURIComponent(convidado.nome)}`;
       
       return `
