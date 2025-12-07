@@ -1,32 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Convite – Recital de Saxofone</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #1a1a2e, #050508);
-      color: #f1f5f9;
+@@ -16,52 +86,6 @@
       overflow: hidden;
+    }
+
+    .holofote {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,215,120,0.15), rgba(0,0,0,0.85) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particulas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: repeating-radial-gradient(circle at 30% 30%, rgba(255,215,120,0.05), transparent 80px);
+      animation: brilhar 8s linear infinite;
+    }
+
+    @keyframes brilhar {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+      100% { opacity: 0.3; }
+    }
+
+    .notas-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 6; /* garante que continue visível durante confirmação */
+    }
+    }
+
+    .nota {
+      position: absolute;
+      bottom: -40px;
+      color: rgba(248, 250, 252, 0.7);
+      font-size: 24px;
+      animation: subirNota linear forwards;
+    }
+
+    @keyframes subirNota {
+      from { transform: translateY(0) scale(0.8); opacity: 0; }
+      20% { opacity: 0.9; }
+      to { transform: translateY(-110vh) scale(1.3); opacity: 0; }
     }
 
     .center-screen {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      position: relative;
+@@ -73,7 +97,22 @@
       z-index: 5;
     }
 
+    .sax { font-size: 120px; }
     .sax {
       font-size: 120px;
       animation: float 4s ease-in-out infinite;
@@ -46,10 +78,7 @@
 
     .play-btn {
       margin-top: 30px;
-      padding: 14px 28px;
-      background: transparent;
-      border: 1px solid #c7a93c;
-      color: #f8fafc;
+@@ -84,235 +123,453 @@
       border-radius: 40px;
       font-size: 18px;
       cursor: pointer;
@@ -65,6 +94,7 @@
     .painel {
       position: fixed;
       inset: 0;
+      background: rgba(10,10,20,0.95);
       background: linear-gradient(to bottom, rgba(5,5,8,0.95), rgba(15,15,30,0.98));
       display: flex;
       align-items: center;
@@ -73,6 +103,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 1s ease;
+      z-index: 5;
       overflow-y: auto; /* Para permitir scroll em dispositivos móveis */
     }
 
@@ -92,6 +123,7 @@
 
     .convite-card {
       max-width: 700px;
+      background: rgba(20,20,35,0.88);
       background: rgba(20, 20, 35, 0.85);
       border: 1px solid rgba(199, 169, 60, 0.3);
       border-radius: 20px;
@@ -99,12 +131,29 @@
       text-align: center;
       box-shadow: 0 0 40px rgba(0,0,0,0.6);
       position: relative;
+      overflow: hidden;
+    }
+
+    .foto-fundo {
+      position: absolute;
+      left: 50%;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      max-height: 360px;
+      z-index: 0;
       flex-shrink: 0;
     }
 
+    .convite-card > * { position: relative; z-index: 1; }
+
+    #btnFechar {
     /* CORREÇÃO DO BOTÃO FECHAR */
     .btnFechar {
       position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
       top: 15px;
       right: 15px;
       background: #c7a93c;
@@ -113,6 +162,8 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
+      width: 32px;
+      height: 32px;
       cursor: pointer;
       font-size: 16px;
       line-height: 30px;
@@ -123,6 +174,14 @@
       transition: background-color 0.3s;
       z-index: 10;
     }
+
+    .confirmacao button {
+      padding: 12px 22px;
+      border-radius: 25px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
     
     .btnFechar:hover {
         background-color: #e0c25d;
@@ -153,12 +212,24 @@
         background-color: #c7a93c;
     }
 
+    #btnSim { background: #22c55e; }
+    #btnNao { background: #ef4444; }
     iframe {
       display: none;
     }
 
+    .popup-confirmacao {
     .particulas {
       position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20,20,35,0.95);
+      padding: 14px 22px;
+      border-radius: 14px;
+      opacity: 0;
+      transition: opacity .4s ease;
+      z-index: 20;
       inset: 0;
       pointer-events: none;
       z-index: 1;
@@ -291,23 +362,35 @@
       }
     }
 
+    .popup-confirmacao.ativo { opacity: 1; }
   </style>
 </head>
 <body>
 
+<div class="holofote"></div>
+<div class="particulas"></div>
+<div class="notas-container" id="notasContainer"></div>
 <div class="particulas" id="particulas"></div>
 
 <div class="center-screen" id="telaInicial">
   <div class="sax">🎷</div>
+  <button class="play-btn" id="btnPlay">▶ Abrir convite</button>
   <button class="play-btn" id="btnPlay">▶ Abrir Convite</button>
 </div>
 
 <div class="painel" id="painelConvite">
+  <div class="convite-card">
+    <img src="/mnt/data/eu.png" class="foto-fundo" alt="Hewerton com sax">
+    <button id="btnFechar">×</button>
+    <h1>Convite Especial</h1>
+    <h2>Recital de Saxofone – Formatura</h2>
+    <p id="textoConvite"></p>
+
+    <div style="margin-top:20px;font-size:20px;font-weight:600;color:#facc15;">
+      📅 08 de dezembro de 2025<br>⏰ 20h00
     <div class="convite-wrapper">
-        <!-- CORRIGIDO: O arquivo baixado do Google Drive não era uma imagem, mas sim uma página HTML de login.
-             Vou manter o nome do arquivo, mas o usuário precisará garantir que o arquivo 'nova_imagem.jpg'
-             seja uma imagem válida no mesmo diretório. -->
-        <img src="nova_imagem.jpg" alt="Artista com saxofone" class="foto-artista" onerror="this.style.display='none'">
+        <!-- Imagem ajustada para o arquivo 'eu.png' existente no repositório -->
+        <img src="eu.png" alt="Artista com saxofone" class="foto-artista" onerror="this.style.display='none'">
         
         <div class="convite-card">
     
@@ -316,10 +399,10 @@
             
             <p class="scroll-message">Role para baixo para ler o convite completo.</p>
     
-            <h1>Convite Especial</h1>
+            <h1 id="tituloConvite">Convite Especial</h1>
             <h2>Recital de Saxofone – Formatura</h2>
     
-            <p>
+            <p id="textoConvite">
               É com grande alegria que convido você para prestigiar minha
               <strong>formatura em Saxofone</strong> pelo
               <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>.
@@ -347,18 +430,44 @@
     
         </div>
     </div>
+
+    <div class="confirmacao">
+      <p id="textoConvite"></p>
+
+    <div class="confirmacao" style="margin-top:20px;">
+      <p><strong>Você irá comparecer?</strong></p>
+      <div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;">
+        <button id="btnSimConfirmacao" style="background:#16a34a;color:#fff;border:none;padding:10px 18px;border-radius:20px;cursor:pointer;">✅ Sim</button>
+        <button id="btnNaoConfirmacao" style="background:#dc2626;color:#fff;border:none;padding:10px 18px;border-radius:20px;cursor:pointer;">❌ Não</button>
+      </div>
+    </div><strong>Você irá comparecer?</strong></p>
+      <button id="btnSim">✅ Sim</button>
+      <button id="btnNao">❌ Não</button>
+    </div>
+  </div>
 </div>
 
+<div id="popupConfirmacao" class="popup-confirmacao"></div>
+<div id="ytPlayer" style="display:none"></div>
 <div id="popup" class="popup-temp"></div>
 
+<script>
+const telaInicial = document.getElementById('telaInicial');
+const painelConvite = document.getElementById('painelConvite');
+const popup = document.getElementById('popupConfirmacao');
+const textoConvite = document.getElementById('textoConvite');
 <iframe id="musica"></iframe>
 
+const params = new URLSearchParams(window.location.search);
+const nome = params.get('nome');
 <script src="https://www.youtube.com/iframe_api"></script>
 
+textoConvite.innerHTML = nome
+  ? `É com grande alegria que <strong>eu, Hewerton Assunção</strong>, convido <strong>${nome}</strong> para prestigiar minha <strong>formatura em Saxofone</strong> pelo <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>. Sua presença tornará este momento ainda mais especial.`
+  : `É com grande alegria que <strong>eu, Hewerton Assunção</strong>, convido você para prestigiar minha <strong>formatura em Saxofone</strong> pelo <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>. Sua presença tornará este momento ainda mais especial.`;
 <script>
   var player;
-  var isPlayerReady = false;
-  var pendingPlay = false; // Flag para indicar se há uma reprodução pendente
+  var isPlayerReady = false; // Novo flag para controlar o estado do player
   var volumeIcon = '🔊';
   var muteIcon = '🔇';
 
@@ -376,17 +485,9 @@
       },
       events: {
         onReady: function(event) {
-          event.target.mute(); // Inicia mudo para permitir autoplay
           event.target.setVolume(15);
-          document.getElementById('btnMute').textContent = muteIcon;
-          isPlayerReady = true;
-          if (pendingPlay) {
-            player.playVideo();
-            pendingPlay = false;
-          }
-        },
-        onStateChange: function(event) {
-          // Opcional: Adicione lógica se necessário para estado de mudança
+          document.getElementById('btnMute').textContent = volumeIcon;
+          isPlayerReady = true; // Player está pronto
         }
       }
     });
@@ -399,14 +500,25 @@
     tela.style.display = 'none';
     painel.classList.add('ativo');
 
-    // Aguarda o player estar pronto antes de reproduzir
-    if (isPlayerReady && player && typeof player.playVideo === 'function') {
+    // CORREÇÃO: Inicia a música somente se o player estiver pronto
+    if (isPlayerReady && typeof player.playVideo === 'function') {
       player.playVideo();
-    } else {
-      pendingPlay = true; // Define pendente; será reproduzido no onReady
+    } else if (player) {
+        // Se o player ainda não estiver pronto, adiciona um listener para iniciar
+        // a música assim que ele estiver pronto.
+        player.addEventListener('onStateChange', function onStateChange(event) {
+            if (event.data === YT.PlayerState.CUED || event.data === YT.PlayerState.UNSTARTED) {
+                player.playVideo();
+                player.removeEventListener('onStateChange', onStateChange);
+            }
+        });
     }
   }
 
+// Inicia e mantém as notas sempre ativas após o PLAY
+function iniciarNotas() {
+  if (window._notasAtivas) return;
+  window._notasAtivas = true;
   function fecharConvite() {
     document.getElementById('painelConvite').classList.remove('ativo');
     document.getElementById('telaInicial').style.display = 'flex';
@@ -466,6 +578,26 @@
       }
   }
 
+  // Lógica de personalização
+  function personalizarConvite() {
+    const params = new URLSearchParams(window.location.search);
+    const nome = params.get('nome');
+    const textoConviteElement = document.getElementById('textoConvite');
+    const tituloConviteElement = document.getElementById('tituloConvite');
+
+    if (nome) {
+        tituloConviteElement.textContent = `Convite Especial para ${nome}`;
+        textoConviteElement.innerHTML = `
+            É com grande alegria que convido você, <strong>${nome}</strong>, para prestigiar minha
+            <strong>formatura em Saxofone</strong> pelo
+            <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>.
+        `;
+    }
+  }
+  
+  // Chama a personalização ao carregar a página
+  personalizarConvite();
+
   document.getElementById('btnPlay').addEventListener('click', iniciarConvite);
   document.getElementById('btnFechar').addEventListener('click', fecharConvite);
   document.getElementById('btnMute').addEventListener('click', toggleMute);
@@ -477,11 +609,91 @@
   setInterval(() => {
     const nota = document.createElement('div');
     nota.className = 'nota';
+    nota.textContent = ['♪','♩','♫','♬'][Math.floor(Math.random()*4)];
+    nota.style.left = Math.random() * 100 + '%';
+    nota.style.animationDuration = (6 + Math.random() * 4) + 's';
+    document.getElementById('notasContainer').appendChild(nota);
     nota.textContent = ['♪','♩','♫','♬'][Math.floor(Math.random() * 4)];
     nota.style.left = Math.random() * 100 + 'vw';
     container.appendChild(nota);
     setTimeout(() => nota.remove(), 12000);
   }, 600);
+}() {
+  if (window._notasAtivas) return;
+  window._notasAtivas = true;
+  setInterval(() => {
+    const nota = document.createElement('div');
+    nota.className = 'nota';
+    nota.textContent = '♪';
+    nota.style.left = Math.random() * 100 + '%';
+    nota.style.animationDuration = (6 + Math.random() * 6) + 's';
+    document.getElementById('notasContainer').appendChild(nota);
+    setTimeout(() => nota.remove(), 12000);
+  }, 700);
+}
+
+function iniciarMusica() {
+  document.getElementById('ytPlayer').innerHTML = '<iframe width="1" height="1" src="https://www.youtube.com/embed/uEfy8JoQg8o?autoplay=1" allow="autoplay"></iframe>';
+}
+
+function showPopup(msg) {
+  popup.textContent = msg;
+  popup.classList.add('ativo');
+  setTimeout(() => popup.classList.remove('ativo'), 3000);
+}
+
+btnPlay.onclick = () => {
+  telaInicial.style.display = 'none';
+  painelConvite.classList.add('ativo');
+
+  // notas passam a subir também DURANTE a leitura do convite
+  iniciarNotas();
+  iniciarMusica();
+}; () => {
+  telaInicial.style.display = 'none';
+  painelConvite.classList.add('ativo');
+  iniciarNotas();
+  iniciarMusica();
+};
+
+btnFechar.onclick = () => {
+  painelConvite.classList.remove('ativo');
+  telaInicial.style.display = 'flex';
+};
+
+btnSim.onclick = () => {
+  showPopup('✨ Será uma honra receber você!');
+  // Mantém as notas ativas mesmo na tela de confirmação
+  iniciarNotas();
+};('✨ Será uma honra receber você!');
+btnNao.onclick = () => showPopup('⚠️ Esta opção foi desabilitada pelo administrador!');
+  // Personalização por nome via URL (?nome=)
+  const params = new URLSearchParams(window.location.search);
+  const nomeConvidado = params.get('nome');
+  const textoConvite = document.getElementById('textoConvite');
+
+  textoConvite.innerHTML = nomeConvidado
+    ? `É com grande alegria que eu, <strong>Hewerton Assunção</strong>, convido <strong>${nomeConvidado}</strong> para prestigiar minha <strong>formatura em Saxofone</strong> pelo <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>. Sua presença tornará este momento ainda mais especial.`
+    : `É com grande alegria que eu, <strong>Hewerton Assunção</strong>, convido você para prestigiar minha <strong>formatura em Saxofone</strong> pelo <strong>Conservatório Estadual de Música Lobo de Mesquita</strong>. Sua presença tornará este momento ainda mais especial.`;
+
+  function registrarConfirmacao(resp) {
+    const dados = {
+      nome: nomeConvidado || 'Convidado anônimo',
+      resposta: resp,
+      data: new Date().toISOString()
+    };
+    localStorage.setItem('ultimaConfirmacaoConvite', JSON.stringify(dados));
+  }
+
+  document.getElementById('btnSimConfirmacao').addEventListener('click', () => {
+    registrarConfirmacao('SIM');
+    alert('✨ Será uma honra receber você!');
+  });
+
+  document.getElementById('btnNaoConfirmacao').addEventListener('click', () => {
+    registrarConfirmacao('NAO');
+    alert('⚠️ Esta opção foi desabilitada pelo administrador!');
+  });
 </script>
 
 </body>
