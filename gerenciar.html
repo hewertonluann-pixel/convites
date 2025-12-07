@@ -3,286 +3,550 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Convites – Recital</title>
+  <title>Gerenciador de Convites Personalizados</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
-    body {
+    * {
       margin: 0;
-      font-family: "Inter", sans-serif;
-      background: radial-gradient(circle at top, #020617, #020617);
-      color: #e5e7eb;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #f1f5f9;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 30px 10px;
+      padding: 20px;
     }
 
     .container {
-      width: 100%;
       max-width: 900px;
-      background: rgba(15,23,42,0.95);
-      border-radius: 18px;
-      padding: 24px 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-      border: 1px solid rgba(148,163,184,0.3);
+      margin: 0 auto;
     }
 
-    h1 {
-      margin: 0 0 8px;
+    .header {
       text-align: center;
-      color: #facc15;
-      font-size: 22px;
+      margin-bottom: 40px;
+      padding-top: 20px;
     }
 
-    p.sub {
-      text-align: center;
-      margin: 0 0 20px;
-      font-size: 13px;
-      color: #9ca3af;
-    }
-
-    label {
-      font-size: 13px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-gerar {
-      width: 100%;
-      background: #facc15;
-      color: #0f172a;
-      margin-bottom: 15px;
-    }
-
-    .lista-convidados {
-      margin-top: 20px;
-    }
-
-    .lista-convidados h2 {
-      font-size: 16px;
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5em;
       margin-bottom: 10px;
-      color: #e5e7eb;
+      color: #facc15;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 400px;
-      overflow-y: auto;
+    .header p {
+      color: #cbd5e1;
+      font-size: 1.1em;
     }
 
-    li {
-      background: rgba(15,23,42,0.9);
-      border-radius: 12px;
-      padding: 10px 12px;
+    .card {
+      background: rgba(20, 20, 35, 0.85);
+      border: 1px solid rgba(199, 169, 60, 0.3);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .card h2 {
+      color: #c7a93c;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
       margin-bottom: 8px;
-      border: 1px solid rgba(55,65,81,0.8);
-      font-size: 13px;
-    }
-
-    .linha-topo {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .nome {
       font-weight: 600;
-      color: #e5e7eb;
+      color: #e2e8f0;
     }
 
-    .status {
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 999px;
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(199, 169, 60, 0.3);
+      border-radius: 8px;
+      background: rgba(30, 30, 45, 0.8);
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      font-size: 1em;
     }
 
-    .status-pendente {
-      background: rgba(248, 250, 252, 0.06);
-      color: #fbbf24;
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #c7a93c;
+      box-shadow: 0 0 10px rgba(199, 169, 60, 0.3);
     }
 
-    .status-confirmado {
-      background: rgba(22,163,74,0.25);
-      color: #bbf7d0;
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
     }
 
-    .link {
-      color: #9ca3af;
-      word-break: break-word;
-      margin-top: 4px;
-    }
-
-    .acoes {
-      margin-top: 6px;
+    .button-group {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .acoes a {
-      font-size: 12px;
-      text-decoration: none;
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1em;
+    }
+
+    .btn-primary {
+      background: #c7a93c;
+      color: #1a1a2e;
+    }
+
+    .btn-primary:hover {
+      background: #e0c25d;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(199, 169, 60, 0.2);
+      color: #c7a93c;
+      border: 1px solid #c7a93c;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(199, 169, 60, 0.3);
+    }
+
+    .btn-copy {
+      background: #10b981;
+      color: #050508;
+    }
+
+    .btn-copy:hover {
+      background: #059669;
+    }
+
+    .convidados-list {
+      margin-top: 30px;
+    }
+
+    .convidado-item {
+      background: rgba(30, 30, 45, 0.6);
+      border-left: 3px solid #c7a93c;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .convidado-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .convidado-nome {
+      font-weight: 600;
       color: #facc15;
+      margin-bottom: 5px;
+    }
+
+    .convidado-link {
+      font-size: 0.9em;
+      color: #94a3b8;
+      word-break: break-all;
+      background: rgba(10, 10, 20, 0.5);
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+
+    .convidado-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9em;
+    }
+
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-box {
+      background: rgba(30, 30, 45, 0.6);
+      border: 1px solid rgba(199, 169, 60, 0.3);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2em;
+      font-weight: 700;
+      color: #c7a93c;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #cbd5e1;
+      font-size: 0.9em;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #10b981;
+      display: block;
+    }
+
+    .message.error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      display: block;
+    }
+
+    .export-section {
+      margin-top: 30px;
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8em;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .convidado-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .convidado-actions {
+        width: 100%;
+      }
+
+      .convidado-actions button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🎷 Convites do Recital</h1>
-  <p class="sub">Gerencie convidados, links e confirmações do recital.</p>
-
-  <div>
-    <label for="nome">Nome do convidado</label>
-    <input id="nome" type="text" placeholder="Ex: Maria Silva" />
-
-    <label for="linkBase">Link base do convite</label>
-    <input id="linkBase" type="text" value="convite.html" />
-
-    <button class="btn-gerar" id="btnGerar">Gerar convite</button>
+  <div class="header">
+    <h1>🎷 Gerenciador de Convites</h1>
+    <p>Crie e gerencie convites personalizados para sua formatura</p>
   </div>
 
-  <div class="lista-convidados">
-    <h2>📋 Convites gerados</h2>
-    <ul id="lista"></ul>
+  <div class="card">
+    <h2>Adicionar Novo Convidado</h2>
+    <div id="message" class="message"></div>
+    
+    <div class="form-group">
+      <label for="nomeConvidado">Nome do Convidado</label>
+      <input type="text" id="nomeConvidado" placeholder="Ex: João Silva" />
+    </div>
+
+    <div class="form-group">
+      <label for="emailConvidado">Email (Opcional)</label>
+      <input type="email" id="emailConvidado" placeholder="Ex: joao@email.com" />
+    </div>
+
+    <div class="form-group">
+      <label for="notasConvidado">Notas (Opcional)</label>
+      <textarea id="notasConvidado" placeholder="Ex: Confirmou presença, alergia a..."></textarea>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-primary" onclick="adicionarConvidado()">➕ Adicionar Convidado</button>
+      <button class="btn-secondary" onclick="limparFormulario()">🗑️ Limpar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Estatísticas</h2>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-number" id="totalConvidados">0</div>
+        <div class="stat-label">Total de Convidados</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="confirmados">0</div>
+        <div class="stat-label">Confirmados</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="pendentes">0</div>
+        <div class="stat-label">Pendentes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Lista de Convidados</h2>
+    <div class="convidados-list" id="convidadosList">
+      <p style="color: #94a3b8; text-align: center;">Nenhum convidado adicionado ainda.</p>
+    </div>
+  </div>
+
+  <div class="card export-section">
+    <h2>Exportar Dados</h2>
+    <div class="export-buttons">
+      <button class="btn-primary" onclick="exportarJSON()">📥 Exportar JSON</button>
+      <button class="btn-primary" onclick="exportarCSV()">📊 Exportar CSV</button>
+      <button class="btn-secondary" onclick="importarDados()">📤 Importar Dados</button>
+    </div>
+    <input type="file" id="fileInput" style="display: none;" accept=".json,.csv" />
   </div>
 </div>
 
-<script type="module">
-import { db } from "./firebase-config.js";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-
-const btnGerar = document.getElementById("btnGerar");
-const nomeInput = document.getElementById("nome");
-const linkBaseInput = document.getElementById("linkBase");
-const lista = document.getElementById("lista");
-
-const colConvites = collection(db, "convites_recital");
-
-btnGerar.addEventListener("click", async () => {
-  const nome = nomeInput.value.trim();
-  const linkBase = linkBaseInput.value.trim();
-
-  if (!nome) {
-    alert("Digite o nome do convidado");
-    return;
+<script>
+  // Carrega os dados do localStorage
+  function carregarDados() {
+    const dados = localStorage.getItem('convidados');
+    return dados ? JSON.parse(dados) : [];
   }
 
-  try {
-    const docRef = await addDoc(colConvites, {
-      nome,
-      confirmado: false,
-      criadoEm: serverTimestamp()
-    });
+  // Salva os dados no localStorage
+  function salvarDados(convidados) {
+    localStorage.setItem('convidados', JSON.stringify(convidados));
+    atualizarLista();
+  }
 
-    const linkFinal = `${linkBase}?id=${docRef.id}&nome=${encodeURIComponent(nome)}`;
+  // Mostra mensagem
+  function mostrarMensagem(texto, tipo) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = texto;
+    messageDiv.className = `message ${tipo}`;
+    setTimeout(() => {
+      messageDiv.className = 'message';
+    }, 3000);
+  }
 
-    adicionarItemLista({
+  // Adiciona um novo convidado
+  function adicionarConvidado() {
+    const nome = document.getElementById('nomeConvidado').value.trim();
+    const email = document.getElementById('emailConvidado').value.trim();
+    const notas = document.getElementById('notasConvidado').value.trim();
+
+    if (!nome) {
+      mostrarMensagem('❌ Por favor, insira o nome do convidado.', 'error');
+      return;
+    }
+
+    const convidados = carregarDados();
+    const id = Date.now();
+    const novoConvidado = {
+      id,
       nome,
-      link: linkFinal,
+      email,
+      notas,
+      dataCriacao: new Date().toISOString(),
       confirmado: false
-    });
+    };
 
-    nomeInput.value = "";
-  } catch (erro) {
-    console.error("Erro ao gerar convite:", erro);
-    alert("Erro ao gerar convite. Veja o console.");
-  }
-});
-
-function adicionarItemLista(dados) {
-  const li = document.createElement("li");
-
-  const linha = document.createElement("div");
-  linha.className = "linha-topo";
-
-  const nome = document.createElement("span");
-  nome.className = "nome";
-  nome.textContent = dados.nome;
-
-  const status = document.createElement("span");
-  status.classList.add("status");
-  if (dados.confirmado) {
-    status.classList.add("status-confirmado");
-    status.textContent = "Confirmado";
-  } else {
-    status.classList.add("status-pendente");
-    status.textContent = "Pendente";
+    convidados.push(novoConvidado);
+    salvarDados(convidados);
+    limparFormulario();
+    mostrarMensagem(`✅ Convidado "${nome}" adicionado com sucesso!`, 'success');
   }
 
-  linha.appendChild(nome);
-  linha.appendChild(status);
+  // Remove um convidado
+  function removerConvidado(id) {
+    if (confirm('Tem certeza que deseja remover este convidado?')) {
+      const convidados = carregarDados();
+      const convidadoRemovido = convidados.find(c => c.id === id);
+      const filtrados = convidados.filter(c => c.id !== id);
+      salvarDados(filtrados);
+      mostrarMensagem(`✅ Convidado "${convidadoRemovido.nome}" removido.`, 'success');
+    }
+  }
 
-  const divLink = document.createElement("div");
-  divLink.className = "link";
-  divLink.textContent = dados.link;
+  // Limpa o formulário
+  function limparFormulario() {
+    document.getElementById('nomeConvidado').value = '';
+    document.getElementById('emailConvidado').value = '';
+    document.getElementById('notasConvidado').value = '';
+  }
 
-  const divAcoes = document.createElement("div");
-  divAcoes.className = "acoes";
+  // Atualiza a lista de convidados
+  function atualizarLista() {
+    const convidados = carregarDados();
+    const lista = document.getElementById('convidadosList');
 
-  const abrir = document.createElement("a");
-  abrir.href = dados.link;
-  abrir.target = "_blank";
-  abrir.textContent = "🔗 Abrir convite";
+    // Atualiza estatísticas
+    const confirmados = convidados.filter(c => c.confirmado).length;
+    document.getElementById('totalConvidados').textContent = convidados.length;
+    document.getElementById('confirmados').textContent = confirmados;
+    document.getElementById('pendentes').textContent = convidados.length - confirmados;
 
-  divAcoes.appendChild(abrir);
-  li.appendChild(linha);
-  li.appendChild(divLink);
-  li.appendChild(divAcoes);
+    if (convidados.length === 0) {
+      lista.innerHTML = '<p style="color: #94a3b8; text-align: center;">Nenhum convidado adicionado ainda.</p>';
+      return;
+    }
 
-  lista.appendChild(li);
-}
+    lista.innerHTML = convidados.map(convidado => {
+      const baseURL = window.location.origin + window.location.pathname.replace('gerenciador.html', 'convite.html');
+      const linkPersonalizado = `${baseURL}?nome=${encodeURIComponent(convidado.nome)}`;
+      
+      return `
+        <div class="convidado-item">
+          <div class="convidado-info">
+            <div class="convidado-nome">${convidado.nome}</div>
+            ${convidado.email ? `<div style="color: #cbd5e1; font-size: 0.9em;">📧 ${convidado.email}</div>` : ''}
+            ${convidado.notas ? `<div style="color: #94a3b8; font-size: 0.9em;">📝 ${convidado.notas}</div>` : ''}
+            <div class="convidado-link">
+              <strong>Link:</strong> <br/>
+              <code>${linkPersonalizado}</code>
+            </div>
+          </div>
+          <div class="convidado-actions">
+            <button class="btn-copy btn-small" onclick="copiarLink('${linkPersonalizado}')">📋 Copiar Link</button>
+            <button class="btn-delete btn-small" onclick="removerConvidado(${convidado.id})">🗑️ Remover</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
-async function carregarConvites() {
-  lista.innerHTML = "";
-  const q = query(colConvites, orderBy("criadoEm", "desc"));
-  const snap = await getDocs(q);
-
-  snap.forEach(docSnap => {
-    const dados = docSnap.data();
-    const linkFinal = `${linkBaseInput.value}?id=${docSnap.id}&nome=${encodeURIComponent(dados.nome)}`;
-
-    adicionarItemLista({
-      nome: dados.nome,
-      confirmado: dados.confirmado,
-      link: linkFinal
+  // Copia o link para a área de transferência
+  function copiarLink(link) {
+    navigator.clipboard.writeText(link).then(() => {
+      mostrarMensagem('✅ Link copiado para a área de transferência!', 'success');
+    }).catch(() => {
+      mostrarMensagem('❌ Erro ao copiar o link.', 'error');
     });
+  }
+
+  // Exporta os dados em JSON
+  function exportarJSON() {
+    const convidados = carregarDados();
+    const dataStr = JSON.stringify(convidados, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `convites_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    mostrarMensagem('✅ Dados exportados em JSON!', 'success');
+  }
+
+  // Exporta os dados em CSV
+  function exportarCSV() {
+    const convidados = carregarDados();
+    let csv = 'Nome,Email,Notas,Data de Criação,Confirmado\n';
+    convidados.forEach(c => {
+      csv += `"${c.nome}","${c.email || ''}","${c.notas || ''}","${c.dataCriacao}","${c.confirmado ? 'Sim' : 'Não'}"\n`;
+    });
+    const dataBlob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `convites_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    mostrarMensagem('✅ Dados exportados em CSV!', 'success');
+  }
+
+  // Importa dados
+  function importarDados() {
+    document.getElementById('fileInput').click();
+  }
+
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        const conteudo = event.target.result;
+        let dados = [];
+
+        if (file.name.endsWith('.json')) {
+          dados = JSON.parse(conteudo);
+        } else if (file.name.endsWith('.csv')) {
+          // Parse simples de CSV
+          const linhas = conteudo.split('\n');
+          for (let i = 1; i < linhas.length; i++) {
+            if (linhas[i].trim()) {
+              const partes = linhas[i].split(',');
+              dados.push({
+                id: Date.now() + i,
+                nome: partes[0].replace(/"/g, ''),
+                email: partes[1]?.replace(/"/g, '') || '',
+                notas: partes[2]?.replace(/"/g, '') || '',
+                dataCriacao: partes[3]?.replace(/"/g, '') || new Date().toISOString(),
+                confirmado: partes[4]?.replace(/"/g, '').toLowerCase() === 'sim'
+              });
+            }
+          }
+        }
+
+        if (Array.isArray(dados) && dados.length > 0) {
+          salvarDados(dados);
+          mostrarMensagem(`✅ ${dados.length} convidado(s) importado(s) com sucesso!`, 'success');
+        } else {
+          mostrarMensagem('❌ Formato de arquivo inválido.', 'error');
+        }
+      } catch (erro) {
+        mostrarMensagem('❌ Erro ao importar arquivo: ' + erro.message, 'error');
+      }
+    };
+    reader.readAsText(file);
   });
-}
 
-carregarConvites();
+  // Carrega a lista ao iniciar
+  atualizarLista();
 </script>
 
 </body>
