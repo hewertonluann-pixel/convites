@@ -153,10 +153,6 @@
         background-color: #c7a93c;
     }
 
-    iframe {
-      display: none;
-    }
-
     .particulas {
       position: fixed;
       inset: 0;
@@ -349,37 +345,14 @@
 
 <div id="popup" class="popup-temp"></div>
 
-<iframe id="musica"></iframe>
-
-<script src="https://www.youtube.com/iframe_api"></script>
+<audio id="musica" src="musica.mp3" preload="auto" loop></audio>
 
 <script>
-  var player;
-  var isPlayerReady = false; // Novo flag para controlar o estado do player
   var volumeIcon = '🔊';
   var muteIcon = '🔇';
-
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('musica', {
-      height: '0',
-      width: '0',
-      videoId: 'uEfy8JoQg8o',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        loop: 1,
-        playlist: 'uEfy8JoQg8o',
-        start: 22
-      },
-      events: {
-        onReady: function(event) {
-          event.target.setVolume(15);
-          document.getElementById('btnMute').textContent = volumeIcon;
-          isPlayerReady = true; // Player está pronto
-        }
-      }
-    });
-  }
+  var audio = document.getElementById('musica');
+  audio.volume = 0.15; // Define volume baixo (equivalente a 15% no YouTube)
+  document.getElementById('btnMute').textContent = volumeIcon;
 
   function iniciarConvite() {
     const tela = document.getElementById('telaInicial');
@@ -388,19 +361,7 @@
     tela.style.display = 'none';
     painel.classList.add('ativo');
 
-    // CORREÇÃO: Inicia a música somente se o player estiver pronto
-    if (isPlayerReady && typeof player.playVideo === 'function') {
-      player.playVideo();
-    } else if (player) {
-        // Se o player ainda não estiver pronto, adiciona um listener para iniciar
-        // a música assim que ele estiver pronto.
-        player.addEventListener('onStateChange', function onStateChange(event) {
-            if (event.data === YT.PlayerState.CUED || event.data === YT.PlayerState.UNSTARTED) {
-                player.playVideo();
-                player.removeEventListener('onStateChange', onStateChange);
-            }
-        });
-    }
+    audio.play();
   }
 
   function fecharConvite() {
@@ -414,20 +375,15 @@
     document.getElementById('btnSim').style.backgroundColor = '#10b981';
     document.getElementById('btnNao').style.backgroundColor = '#ef4444';
 
-    if (player && typeof player.stopVideo === 'function') {
-      player.stopVideo();
-    }
+    audio.pause();
   }
   
   function toggleMute() {
-      if (player && typeof player.isMuted === 'function') {
-          if (player.isMuted()) {
-              player.unMute();
-              document.getElementById('btnMute').textContent = volumeIcon;
-          } else {
-              player.mute();
-              document.getElementById('btnMute').textContent = muteIcon;
-          }
+      audio.muted = !audio.muted;
+      if (audio.muted) {
+          document.getElementById('btnMute').textContent = muteIcon;
+      } else {
+          document.getElementById('btnMute').textContent = volumeIcon;
       }
   }
   
